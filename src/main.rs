@@ -1,4 +1,6 @@
 mod lexer;
+mod lexer2;
+mod token;
 
 use lexer::tokenize_all_collect;
 
@@ -7,5 +9,5 @@ fn main() {
 
     let toks = tokenize_all_collect(test);
 
-    println!("#toks = {:?}", toks);
+    println!("{:?}", toks);
 }
