@@ -1,13 +1,13 @@
 use std::fmt::{write, Display, Formatter};
 
 #[derive(PartialEq, Debug)]
-pub struct Token<'source> {
-    pub kind: TokenKind<'source>,
+pub struct Token {
+    pub kind: TokenKind,
     pub literal: String,
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Debug)]
-pub enum TokenKind<'source> {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum TokenKind {
     EOF,
     Error,
     Plus,
@@ -25,9 +25,9 @@ pub enum TokenKind<'source> {
     RightAng,
     LeftBrace,
     RightBrace,
-    Number(&'source str),
-    Keyword(&'source str),
-    Identifier(&'source str),
+    Number,
+    Keyword,
+    Identifier,
     Function,
     Var,
     Const,
