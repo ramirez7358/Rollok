@@ -228,6 +228,9 @@ mod test {
                 literal: "".to_string(),
             },
         ];
+
+        let mut lexer = Lexer::new(input);
+        exec_assert(expected, &mut lexer);
     }
 
     #[test]
@@ -269,6 +272,10 @@ mod test {
         ];
 
         let mut lexer = Lexer::new(input);
+        exec_assert(expected, &mut lexer);
+    }
+
+    fn exec_assert(expected: Vec<Token>, lexer: &mut Lexer) {
         for (index, exp_token) in expected.into_iter().enumerate() {
             let receive_token = lexer.next_token();
             assert_eq!(
