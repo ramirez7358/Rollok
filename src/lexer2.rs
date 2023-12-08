@@ -50,7 +50,16 @@ impl Lexer {
                 kind: TokenKind::EOF,
                 literal: "".to_string(),
             },
-            _ => Lexer::new_token(TokenKind::Error, self.ch),
+
+            _ => {
+                if Lexer::is_letter(self.ch) {
+                    let literal = self.read_identifier();
+                    let kind = lookup_ident(&literal);
+                    Token { kind, literal }
+                } else {
+                    Lexer::new_token(TokenKind::Error, self.ch)
+                }
+            }
         };
 
         self.read_char();
@@ -70,6 +79,156 @@ impl Lexer {
 mod test {
     use crate::lexer2::Lexer;
     use crate::token::{Token, TokenKind};
+
+    #[test]
+    fn test_program() {
+        let input = r#"
+            var five = 5;
+            const six = 6;
+
+            var add = {x, y => x + y};
+            var result = add(five, six);
+        "#;
+
+        let expected: Vec<Token> = vec![
+            Token {
+                kind: TokenKind::Var,
+                literal: "var".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "five".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Const,
+                literal: "const".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "six".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "6".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Var,
+                literal: "var".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "add".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "x".to_string(),
+            },
+            Token {
+                kind: TokenKind::Comma,
+                literal: ",".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "y".to_string(),
+            },
+            Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
+                kind: TokenKind::GreaterThan,
+                literal: ">".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "x".to_string(),
+            },
+            Token {
+                kind: TokenKind::Plus,
+                literal: "+".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "y".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Var,
+                literal: "var".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "result".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "add".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftParent,
+                literal: "(".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "five".to_string(),
+            },
+            Token {
+                kind: TokenKind::Comma,
+                literal: ",".to_string(),
+            },
+            Token {
+                kind: TokenKind::Identifier,
+                literal: "six".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightParent,
+                literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::EOF,
+                literal: "".to_string(),
+            },
+        ];
+    }
 
     #[test]
     fn test_next_token() {
