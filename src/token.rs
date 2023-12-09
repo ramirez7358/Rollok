@@ -57,8 +57,16 @@ impl Display for TokenKind {
             TokenKind::Function => write!(f, "Function"),
             TokenKind::Var => write!(f, "var"),
             TokenKind::Const => write!(f, "const"),
-            TokenKind::GTE => write!(f, "=>"),
+            TokenKind::GreaterThan => write!(f, ">"),
             _ => write!(f, "other"),
         }
+    }
+}
+
+pub fn lookup_ident(identifier: &str) -> TokenKind {
+    match identifier {
+        "var" => TokenKind::Var,
+        "const" => TokenKind::Const,
+        _ => TokenKind::Identifier
     }
 }

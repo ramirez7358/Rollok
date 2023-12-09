@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenKind};
+use crate::token::{lookup_ident, Token, TokenKind};
 
 struct Lexer {
     input: Vec<char>,
@@ -50,7 +50,6 @@ impl Lexer {
                 kind: TokenKind::EOF,
                 literal: "".to_string(),
             },
-
             _ => {
                 if Lexer::is_letter(self.ch) {
                     let literal = self.read_identifier();
@@ -67,11 +66,24 @@ impl Lexer {
         return token;
     }
 
+    fn is_letter(ch: char) -> bool {
+        ch.is_alphabetic() || ch == '_'
+    }
+
     fn new_token(kind: TokenKind, ch: char) -> Token {
         Token {
             kind,
             literal: ch.to_string(),
         }
+    }
+
+    fn read_identifier(&mut self) -> String {
+        let mut identifier = String::new();
+        while Lexer::is_letter(self.ch) {
+            identifier.push(self.ch);
+            self.read_char();
+        }
+        identifier
     }
 }
 
