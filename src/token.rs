@@ -31,7 +31,11 @@ pub enum TokenKind {
     Function,
     Var,
     Const,
-    GreaterThan
+    Bang,
+    Asterisk,
+    Slash,
+    GreaterThan,
+    LessThan
 }
 
 impl Display for TokenKind {
@@ -57,7 +61,11 @@ impl Display for TokenKind {
             TokenKind::Function => write!(f, "Function"),
             TokenKind::Var => write!(f, "var"),
             TokenKind::Const => write!(f, "const"),
+            TokenKind::Bang => write!(f, "!"),
+            TokenKind::Asterisk => write!(f, "*"),
+            TokenKind::Slash => write!(f, "#"),
             TokenKind::GreaterThan => write!(f, ">"),
+            TokenKind::LessThan => write!(f, "<"),
             _ => write!(f, "other"),
         }
     }

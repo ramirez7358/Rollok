@@ -31,6 +31,7 @@ impl Lexer {
     }
 
     fn next_token(&mut self) -> Token {
+        self.skip_whitespaces();
         let token = match self.ch {
             '+' => Lexer::new_token(TokenKind::Plus, self.ch),
             '-' => Lexer::new_token(TokenKind::Minus, self.ch),
@@ -51,12 +52,18 @@ impl Lexer {
                 literal: "".to_string(),
             },
             _ => {
-                if Lexer::is_letter(self.ch) {
-                    let literal = self.read_identifier();
-                    let kind = lookup_ident(&literal);
-                    Token { kind, literal }
-                } else {
-                    Lexer::new_token(TokenKind::Error, self.ch)
+                match self.ch {
+                    ch if Lexer::is_letter(ch) => {
+                        let literal = self.read_identifier();
+                        let kind = lookup_ident(&literal);
+                        Token { kind, literal }
+                    },
+                    ch if Lexer::is_digit(ch) => {
+                        let kind = TokenKind::Number;
+                        let literal = self.read_number();
+                        Token { kind, literal }
+                    },
+                    _ => Lexer::new_token(TokenKind::Error, self.ch),
                 }
             }
         };
@@ -68,6 +75,12 @@ impl Lexer {
 
     fn is_letter(ch: char) -> bool {
         ch.is_alphabetic() || ch == '_'
+    }
+
+    fn skip_whitespaces(&mut self) {
+        while self.ch.is_ascii_whitespace() {
+            self.read_char()
+        }
     }
 
     fn new_token(kind: TokenKind, ch: char) -> Token {
@@ -85,6 +98,19 @@ impl Lexer {
         }
         identifier
     }
+
+    fn is_digit(ch: char) -> bool {
+        ch.is_numeric()
+    }
+
+    fn read_number(&mut self) -> String {
+        let mut num = String::from("");
+        while Lexer::is_digit(self.ch) {
+            num.push(self.ch);
+            self.read_char();
+        }
+        num
+    }
 }
 
 #[cfg(test)]
@@ -100,6 +126,9 @@ mod test {
 
             var add = {x, y => x + y};
             var result = add(five, six);
+
+            !-/*5;
+            5 < 10 > 5;
         "#;
 
         let expected: Vec<Token> = vec![
@@ -230,6 +259,54 @@ mod test {
             Token {
                 kind: TokenKind::RightParent,
                 literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Bang,
+                literal: "!".to_string(),
+            },
+            Token {
+                kind: TokenKind::Minus,
+                literal: "-".to_string(),
+            },
+            Token {
+                kind: TokenKind::Divide,
+                literal: "/".to_string(),
+            },
+            Token {
+                kind: TokenKind::Multiply,
+                literal: "*".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::LessThan,
+                literal: "<".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::GreaterThan,
+                literal: ">".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "5".to_string(),
             },
             Token {
                 kind: TokenKind::SemiColon,
