@@ -33,44 +33,54 @@ impl Lexer {
     fn next_token(&mut self) -> Token {
         self.skip_whitespaces();
         let token = match self.ch {
-            '+' => Lexer::new_token(TokenKind::Plus, self.ch),
-            '-' => Lexer::new_token(TokenKind::Minus, self.ch),
-            '*' => Lexer::new_token(TokenKind::Multiply, self.ch),
-            '/' => Lexer::new_token(TokenKind::Divide, self.ch),
-            '=' => Lexer::new_token(TokenKind::Assign, self.ch),
-            ':' => Lexer::new_token(TokenKind::Colon, self.ch),
-            ';' => Lexer::new_token(TokenKind::SemiColon, self.ch),
-            ',' => Lexer::new_token(TokenKind::Comma, self.ch),
-            '(' => Lexer::new_token(TokenKind::LeftParent, self.ch),
-            ')' => Lexer::new_token(TokenKind::RightParent, self.ch),
-            '[' => Lexer::new_token(TokenKind::LeftAng, self.ch),
-            ']' => Lexer::new_token(TokenKind::RightAng, self.ch),
-            '{' => Lexer::new_token(TokenKind::LeftBrace, self.ch),
-            '}' => Lexer::new_token(TokenKind::RightBrace, self.ch),
+            '+' | '-' | '*' | '/' | '=' | ':' | ';' | ',' | '(' | ')' | '[' | ']' | '{' | '}'
+            | '!' | '#' | '>' | '<' => {
+                let t = Lexer::new_token(Lexer::match_token_kind(self.ch), self.ch);
+                self.read_char();
+                t
+            }
             '\0' => Token {
                 kind: TokenKind::EOF,
                 literal: "".to_string(),
             },
-            _ => {
-                match self.ch {
-                    ch if Lexer::is_letter(ch) => {
-                        let literal = self.read_identifier();
-                        let kind = lookup_ident(&literal);
-                        Token { kind, literal }
-                    },
-                    ch if Lexer::is_digit(ch) => {
-                        let kind = TokenKind::Number;
-                        let literal = self.read_number();
-                        Token { kind, literal }
-                    },
-                    _ => Lexer::new_token(TokenKind::Error, self.ch),
-                }
+            ch if Lexer::is_letter(ch) => {
+                let literal = self.read_identifier();
+                let kind = lookup_ident(&literal);
+                Token { kind, literal }
             }
+            ch if Lexer::is_digit(ch) => {
+                let kind = TokenKind::Number;
+                let literal = self.read_number();
+                Token { kind, literal }
+            }
+            _ => Lexer::new_token(TokenKind::Error, self.ch),
         };
 
-        self.read_char();
+        token
+    }
 
-        return token;
+    fn match_token_kind(ch: char) -> TokenKind {
+        match ch {
+            '+' => TokenKind::Plus,
+            '-' => TokenKind::Minus,
+            '*' => TokenKind::Multiply,
+            '/' => TokenKind::Divide,
+            '=' => TokenKind::Assign,
+            ':' => TokenKind::Colon,
+            ';' => TokenKind::SemiColon,
+            ',' => TokenKind::Comma,
+            '(' => TokenKind::LeftParen,
+            ')' => TokenKind::RightParen,
+            '[' => TokenKind::LeftBracket,
+            ']' => TokenKind::RightBracket,
+            '{' => TokenKind::LeftBrace,
+            '}' => TokenKind::RightBrace,
+            '!' => TokenKind::Bang,
+            '#' => TokenKind::Slash,
+            '>' => TokenKind::GreaterThan,
+            '<' => TokenKind::LessThan,
+            _ => TokenKind::Error,
+        }
     }
 
     fn is_letter(ch: char) -> bool {
@@ -237,11 +247,15 @@ mod test {
                 literal: "result".to_string(),
             },
             Token {
+                kind: TokenKind::Assign,
+                literal: "=".to_string(),
+            },
+            Token {
                 kind: TokenKind::Identifier,
                 literal: "add".to_string(),
             },
             Token {
-                kind: TokenKind::LeftParent,
+                kind: TokenKind::LeftParen,
                 literal: "(".to_string(),
             },
             Token {
@@ -257,7 +271,7 @@ mod test {
                 literal: "six".to_string(),
             },
             Token {
-                kind: TokenKind::RightParent,
+                kind: TokenKind::RightParen,
                 literal: ")".to_string(),
             },
             Token {
@@ -335,11 +349,11 @@ mod test {
                 literal: "+".to_string(),
             },
             Token {
-                kind: TokenKind::LeftParent,
+                kind: TokenKind::LeftParen,
                 literal: "(".to_string(),
             },
             Token {
-                kind: TokenKind::RightParent,
+                kind: TokenKind::RightParen,
                 literal: ")".to_string(),
             },
             Token {
