@@ -84,6 +84,11 @@ pub fn lookup_ident(identifier: &str) -> TokenKind {
     match identifier {
         "var" => TokenKind::Var,
         "const" => TokenKind::Const,
+        "true" => TokenKind::True,
+        "false" => TokenKind::False,
+        "if" => TokenKind::If,
+        "else" => TokenKind::Else,
+        "return" => TokenKind::Return,
         _ => TokenKind::Identifier
     }
 }
