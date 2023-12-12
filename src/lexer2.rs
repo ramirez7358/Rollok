@@ -139,6 +139,12 @@ mod test {
 
             !-/*5;
             5 < 10 > 5;
+
+            if(10 > 5) {
+                return true;
+            } else {
+                return false;
+            }
         "#;
 
         let expected: Vec<Token> = vec![
@@ -325,6 +331,74 @@ mod test {
             Token {
                 kind: TokenKind::SemiColon,
                 literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::If,
+                literal: "if".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftParen,
+                literal: "(".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::GreaterThan,
+                literal: ">".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "5".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightParen,
+                literal: ")".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Return,
+                literal: "return".to_string(),
+            },
+            Token {
+                kind: TokenKind::True,
+                literal: "true".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Else,
+                literal: "else".to_string(),
+            },
+            Token {
+                kind: TokenKind::LeftBrace,
+                literal: "{".to_string(),
+            },
+            Token {
+                kind: TokenKind::Return,
+                literal: "return".to_string(),
+            },
+            Token {
+                kind: TokenKind::False,
+                literal: "false".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::RightBrace,
+                literal: "}".to_string(),
             },
             Token {
                 kind: TokenKind::EOF,
