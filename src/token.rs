@@ -35,14 +35,19 @@ pub enum TokenKind {
     Asterisk,
     Slash,
     GreaterThan,
-    LessThan
+    LessThan,
+    True,
+    False,
+    If,
+    Else,
+    Return
 }
 
 impl Display for TokenKind {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             TokenKind::EOF => write!(f, "EOF"),
-            TokenKind::Error => write!(f, "Ilegal"),
+            TokenKind::Error => write!(f, "illegal"),
             TokenKind::Plus => write!(f, "+"),
             TokenKind::Minus => write!(f, "-"),
             TokenKind::Multiply => write!(f, "*"),
@@ -58,13 +63,18 @@ impl Display for TokenKind {
             TokenKind::RightBracket => write!(f, "]"),
             TokenKind::LeftBrace => write!(f, "{{"),
             TokenKind::RightBrace => write!(f, "}}"),
-            TokenKind::Function => write!(f, "Function"),
+            TokenKind::Function => write!(f, "function"),
             TokenKind::Var => write!(f, "var"),
             TokenKind::Const => write!(f, "const"),
             TokenKind::Bang => write!(f, "!"),
             TokenKind::Slash => write!(f, "#"),
             TokenKind::GreaterThan => write!(f, ">"),
             TokenKind::LessThan => write!(f, "<"),
+            TokenKind::True => write!(f, "true"),
+            TokenKind::False => write!(f, "false"),
+            TokenKind::If => write!(f, "if"),
+            TokenKind::Else => write!(f, "else"),
+            TokenKind::Return => write!(f, "return"),
             _ => write!(f, "other"),
         }
     }
