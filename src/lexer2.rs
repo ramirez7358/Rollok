@@ -69,7 +69,7 @@ impl Lexer {
         match_lit: &str,
         no_match_lit: &str,
     ) -> Token {
-        if self.peek_char() == expected_next {
+        let token = if self.peek_char() == expected_next {
             self.read_char();
             Token {
                 kind: match_kind,
@@ -80,7 +80,9 @@ impl Lexer {
                 kind: no_match_kind,
                 literal: String::from(no_match_lit),
             }
-        }
+        };
+        self.read_char();
+        token
     }
 
     fn match_token_kind(ch: char) -> TokenKind {
