@@ -33,8 +33,10 @@ impl Lexer {
     fn next_token(&mut self) -> Token {
         self.skip_whitespaces();
         let token = match self.ch {
-            '+' | '-' | '*' | '/' | '=' | ':' | ';' | ',' | '(' | ')' | '[' | ']' | '{' | '}'
-            | '!' | '#' | '>' | '<' => {
+            '=' => self.create_token('=', TokenKind::Eq, TokenKind::Assign, "==", "="),
+            '!' => self.create_token('=', TokenKind::NotEq, TokenKind::Bang, "!=", "!"),
+            '+' | '-' | '*' | '/' | ':' | ';' | ',' | '(' | ')' | '[' | ']' | '{' | '}' | '#'
+            | '>' | '<' => {
                 let t = Lexer::new_token(Lexer::match_token_kind(self.ch), self.ch);
                 self.read_char();
                 t
@@ -57,6 +59,28 @@ impl Lexer {
         };
 
         token
+    }
+
+    fn create_token(
+        &mut self,
+        expected_next: char,
+        match_kind: TokenKind,
+        no_match_kind: TokenKind,
+        match_lit: &str,
+        no_match_lit: &str,
+    ) -> Token {
+        if self.peek_char() == expected_next {
+            self.read_char();
+            Token {
+                kind: match_kind,
+                literal: String::from(match_lit),
+            }
+        } else {
+            Token {
+                kind: no_match_kind,
+                literal: String::from(no_match_lit),
+            }
+        }
     }
 
     fn match_token_kind(ch: char) -> TokenKind {
@@ -91,6 +115,14 @@ impl Lexer {
         while self.ch.is_ascii_whitespace() {
             self.read_char()
         }
+    }
+
+    fn peek_char(&self) -> char {
+        return if self.read_position >= self.input.len() {
+            '\0'
+        } else {
+            self.input[self.read_position]
+        };
     }
 
     fn new_token(kind: TokenKind, ch: char) -> Token {
@@ -145,6 +177,9 @@ mod test {
             } else {
                 return false;
             }
+
+            10 == 10;
+            10 != 9;
         "#;
 
         let expected: Vec<Token> = vec![
@@ -399,6 +434,38 @@ mod test {
             Token {
                 kind: TokenKind::RightBrace,
                 literal: "}".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::Eq,
+                literal: "==".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "10".to_string(),
+            },
+            Token {
+                kind: TokenKind::NotEq,
+                literal: "!=".to_string(),
+            },
+            Token {
+                kind: TokenKind::Number,
+                literal: "9".to_string(),
+            },
+            Token {
+                kind: TokenKind::SemiColon,
+                literal: ";".to_string(),
             },
             Token {
                 kind: TokenKind::EOF,

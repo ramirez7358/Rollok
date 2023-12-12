@@ -40,7 +40,10 @@ pub enum TokenKind {
     False,
     If,
     Else,
-    Return
+    Return,
+
+    Eq,
+    NotEq,
 }
 
 impl Display for TokenKind {
@@ -75,6 +78,8 @@ impl Display for TokenKind {
             TokenKind::If => write!(f, "if"),
             TokenKind::Else => write!(f, "else"),
             TokenKind::Return => write!(f, "return"),
+            TokenKind::Eq => write!(f, "=="),
+            TokenKind::NotEq => write!(f, "!="),
             _ => write!(f, "other"),
         }
     }
@@ -89,6 +94,6 @@ pub fn lookup_ident(identifier: &str) -> TokenKind {
         "if" => TokenKind::If,
         "else" => TokenKind::Else,
         "return" => TokenKind::Return,
-        _ => TokenKind::Identifier
+        _ => TokenKind::Identifier,
     }
 }
