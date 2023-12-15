@@ -5,6 +5,7 @@ mod lexer;
 mod lexer2;
 mod token;
 mod repl;
+mod ast;
 
 fn main() {
     println!("Hello! This is the Rollok Programming Language!");
