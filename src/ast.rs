@@ -12,13 +12,13 @@ enum StatementNode {
 impl Node for StatementNode {
     fn token_literal(&self) -> String {
         match self {
-            Self::Var(var_stmt) => var_stmt.token_literal()
+            Self::Var(var_stmt) => var_stmt.token_literal(),
         }
     }
 
     fn print_string(&self) -> String {
         match self {
-            Self::Var(var_stmt) => var_stmt.print_string()
+            Self::Var(var_stmt) => var_stmt.print_string(),
         }
     }
 }
@@ -30,26 +30,26 @@ enum ExpressionNode {
 impl Node for ExpressionNode {
     fn token_literal(&self) -> String {
         match self {
-            Self::IdentifierNode(identifier) => identifier.token_literal()
+            Self::IdentifierNode(identifier) => identifier.token_literal(),
         }
     }
 
     fn print_string(&self) -> String {
         match self {
-            Self::IdentifierNode(identifier) => identifier.print_string()
+            Self::IdentifierNode(identifier) => identifier.print_string(),
         }
     }
 }
 
 pub struct Program {
-    statements: Vec<StatementNode>
+    statements: Vec<StatementNode>,
 }
 
 impl Node for Program {
     fn token_literal(&self) -> String {
         if self.statements.len() > 0 {
             match &self.statements[0] {
-                StatementNode::Var(var_stmt) => var_stmt.token_literal()
+                StatementNode::Var(var_stmt) => var_stmt.token_literal(),
             }
         } else {
             String::from("")
@@ -69,7 +69,7 @@ impl Node for Program {
 struct VarStatement {
     token: Token,
     name: Identifier,
-    value: Option<ExpressionNode>
+    value: Option<ExpressionNode>,
 }
 
 impl Node for VarStatement {
@@ -96,7 +96,7 @@ impl Node for VarStatement {
 
 struct Identifier {
     token: Token,
-    value: String
+    value: String,
 }
 
 impl Node for Identifier {
