@@ -1,12 +1,12 @@
-use std::io;
 use crate::repl::start;
+use std::io;
 
+mod ast;
 mod lexer;
 mod lexer2;
-mod token;
-mod repl;
-mod ast;
 mod parser;
+mod repl;
+mod token;
 
 fn main() {
     println!("Hello! This is the Rollok Programming Language!");
