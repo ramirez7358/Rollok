@@ -85,9 +85,11 @@ mod test {
                     expected, var_stmt.name.value
                 );
                 assert_eq!(
-                    var_stmt.name.token_literal(), expected,
+                    var_stmt.name.token_literal(),
+                    expected,
                     "VarStatement name value not {}. got={}",
-                    expected, var_stmt.name.token_literal()
+                    expected,
+                    var_stmt.name.token_literal()
                 );
             }
             other => panic!("stmt is not VarStatement. got={:?}", other),
