@@ -1,6 +1,6 @@
-use crate::ast::Program;
+use crate::ast::{Program, StatementNode};
 use crate::lexer2::Lexer;
-use crate::token::Token;
+use crate::token::{Token, TokenKind};
 
 struct Parser {
     lexer: Lexer,
@@ -27,6 +27,26 @@ impl Parser {
     }
 
     fn parse_program(&mut self) -> Option<Program> {
+        let mut program = Program { statements: vec![] };
+
+        while self.current_token.kind != TokenKind::EOF {
+            if let Some(statement) = self.parse_statement() {
+                program.statements.push(statement);
+            }
+            self.next_token();
+        }
+
+        Some(program)
+    }
+
+    fn parse_statement(&self) -> Option<StatementNode> {
+        match self.current_token.kind {
+            TokenKind::Var => self.parse_var_statement(),
+            _ => None,
+        }
+    }
+
+    fn parse_var_statement(&self) -> Option<StatementNode> {
         None
     }
 }
