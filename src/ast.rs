@@ -97,7 +97,7 @@ impl Node for VarStatement {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Identifier {
     pub token: Token,
     pub value: String,

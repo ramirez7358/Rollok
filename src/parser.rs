@@ -1,4 +1,4 @@
-use crate::ast::{Program, StatementNode};
+use crate::ast::{Identifier, Program, StatementNode, VarStatement};
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
 
@@ -39,15 +39,54 @@ impl Parser {
         Some(program)
     }
 
-    fn parse_statement(&self) -> Option<StatementNode> {
+    fn parse_statement(&mut self) -> Option<StatementNode> {
         match self.current_token.kind {
             TokenKind::Var => self.parse_var_statement(),
             _ => None,
         }
     }
 
-    fn parse_var_statement(&self) -> Option<StatementNode> {
-        None
+    fn parse_var_statement(&mut self) -> Option<StatementNode> {
+        let mut stmt = VarStatement {
+            token: self.current_token.clone(),
+            name: Default::default(),
+            value: Default::default()
+        };
+
+        return if !self.expect_peek(TokenKind::Identifier) {
+            None
+        } else {
+            stmt.name = Identifier {
+                token: self.current_token.clone(),
+                value: self.current_token.literal.clone()
+            };
+
+            if !self.expect_peek(TokenKind::Assign) {
+                None
+            } else {
+                self.next_token();
+                while self.current_token_is(TokenKind::SemiColon) {
+                    self.next_token();
+                }
+                Some(StatementNode::Var(stmt))
+            }
+        };
+    }
+
+    fn expect_peek(&mut self, token_kind: TokenKind) -> bool {
+        if self.peek_token_is(token_kind) {
+            self.next_token();
+            return true;
+        }
+        false
+    }
+
+    fn peek_token_is(&self, token_kind: TokenKind) -> bool {
+        self.peek_token.kind == token_kind
+    }
+
+    fn current_token_is(&self, token_kind: TokenKind) -> bool {
+        self.current_token.kind == token_kind
     }
 }
 
