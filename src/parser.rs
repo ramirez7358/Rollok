@@ -50,7 +50,7 @@ impl Parser {
         let mut stmt = VarStatement {
             token: self.current_token.clone(),
             name: Default::default(),
-            value: Default::default()
+            value: Default::default(),
         };
 
         return if !self.expect_peek(TokenKind::Identifier) {
@@ -58,7 +58,7 @@ impl Parser {
         } else {
             stmt.name = Identifier {
                 token: self.current_token.clone(),
-                value: self.current_token.literal.clone()
+                value: self.current_token.literal.clone(),
             };
 
             if !self.expect_peek(TokenKind::Assign) {
