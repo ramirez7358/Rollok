@@ -42,7 +42,6 @@ pub enum TokenKind {
     If,
     Else,
     Return,
-
     Eq,
     NotEq,
 }
