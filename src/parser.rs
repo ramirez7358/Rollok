@@ -6,6 +6,7 @@ struct Parser {
     lexer: Lexer,
     current_token: Token,
     peek_token: Token,
+    errors: Vec<String>,
 }
 
 impl Parser {
@@ -14,6 +15,7 @@ impl Parser {
             lexer,
             current_token: Default::default(),
             peek_token: Default::default(),
+            errors: vec![],
         };
 
         parser.next_token();
@@ -29,7 +31,7 @@ impl Parser {
     fn parse_program(&mut self) -> Option<Program> {
         let mut program = Program { statements: vec![] };
 
-        while self.current_token.kind != TokenKind::EOF {
+        while !self.current_token_is(TokenKind::EOF) {
             if let Some(statement) = self.parse_statement() {
                 program.statements.push(statement);
             }
@@ -78,6 +80,7 @@ impl Parser {
             self.next_token();
             return true;
         }
+        self.peek_error(token_kind);
         false
     }
 
@@ -87,6 +90,19 @@ impl Parser {
 
     fn current_token_is(&self, token_kind: TokenKind) -> bool {
         self.current_token.kind == token_kind
+    }
+
+    fn errors(&self) -> &Vec<String> {
+        &self.errors
+    }
+
+    fn peek_error(&mut self, token_kind: TokenKind) {
+        let msg = format!(
+            "expected next token to  be {}, got {} instead",
+            token_kind, self.peek_token.kind
+        );
+
+        self.errors.push(msg)
     }
 }
 
@@ -107,6 +123,7 @@ mod test {
         let lexer = Lexer::new(input);
         let mut parser = Parser::new(lexer);
         let program = parser.parse_program();
+        check_parser_errors(parser);
 
         match program {
             Some(program) => {
@@ -153,5 +170,19 @@ mod test {
             }
             other => panic!("stmt is not VarStatement. got={:?}", other),
         }
+    }
+
+    fn check_parser_errors(parser: Parser) {
+        let errors = parser.errors();
+
+        if errors.len() == 0 {
+            return;
+        }
+
+        for error in errors {
+            eprintln!("parser error: {}", error);
+        }
+
+        panic!("parser error present!")
     }
 }
