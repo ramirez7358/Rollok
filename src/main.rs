@@ -10,6 +10,6 @@ mod token;
 
 fn main() {
     println!("Hello! This is the Rollok Programming Language!");
-    
+
     start(io::stdin(), io::stdout());
 }
