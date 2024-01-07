@@ -8,18 +8,21 @@ pub trait Node {
 #[derive(Debug)]
 pub enum StatementNode {
     Var(VarStatement),
+    Return(ReturnStatement),
 }
 
 impl Node for StatementNode {
     fn token_literal(&self) -> String {
         match self {
             Self::Var(var_stmt) => var_stmt.token_literal(),
+            Self::Return(ret_stmt) => ret_stmt.token_literal(),
         }
     }
 
     fn print_string(&self) -> String {
         match self {
             Self::Var(var_stmt) => var_stmt.print_string(),
+            Self::Return(ret_stmt) => ret_stmt.print_string(),
         }
     }
 }
@@ -52,6 +55,7 @@ impl Node for Program {
         if self.statements.len() > 0 {
             match &self.statements[0] {
                 StatementNode::Var(var_stmt) => var_stmt.token_literal(),
+                StatementNode::Return(ret_stmt) => ret_stmt.token_literal(),
             }
         } else {
             String::from("")
@@ -110,5 +114,20 @@ impl Node for Identifier {
 
     fn print_string(&self) -> String {
         self.value.clone()
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct ReturnStatement {
+    pub token: Token,
+    pub ret_value: Option<ExpressionNode>,
+}
+
+impl Node for ReturnStatement {
+    fn token_literal(&self) -> String {
+        self.token.literal.clone()
+    }
+    fn print_string(&self) -> String {
+        todo!()
     }
 }
