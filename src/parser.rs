@@ -1,4 +1,4 @@
-use crate::ast::{Identifier, Program, StatementNode, VarStatement};
+use crate::ast::{Identifier, Program, ReturnStatement, StatementNode, VarStatement};
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
 
@@ -44,8 +44,23 @@ impl Parser {
     fn parse_statement(&mut self) -> Option<StatementNode> {
         match self.current_token.kind {
             TokenKind::Var => self.parse_var_statement(),
+            TokenKind::Return => self.parse_return_statement(),
             _ => None,
         }
+    }
+
+    fn parse_return_statement(&mut self) -> Option<StatementNode> {
+        let stmt = ReturnStatement {
+            token: self.current_token.clone(),
+            ret_value: Default::default(),
+        };
+        self.next_token();
+
+        while !self.current_token_is(TokenKind::SemiColon) {
+            self.next_token();
+        };
+
+        Some(StatementNode::Return(stmt))
     }
 
     fn parse_var_statement(&mut self) -> Option<StatementNode> {
