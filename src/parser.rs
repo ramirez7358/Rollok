@@ -82,6 +82,7 @@ impl Parser {
                 None
             } else {
                 self.next_token();
+                // TODO: need to parse expression
                 while self.current_token_is(TokenKind::SemiColon) {
                     self.next_token();
                 }
