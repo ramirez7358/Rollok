@@ -131,3 +131,9 @@ impl Node for ReturnStatement {
         todo!()
     }
 }
+
+#[derive(Debug, Default)]
+pub struct ExpressionStatement {
+    pub token: Token,
+    pub expression: Option<ExpressionNode>
+}
