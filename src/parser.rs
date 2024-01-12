@@ -1,5 +1,6 @@
 use crate::ast::{
-    ExpressionNode, Identifier, Program, ReturnStatement, StatementNode, VarStatement,
+    ExpressionNode, ExpressionStatement, Identifier, Program, ReturnStatement, StatementNode,
+    VarStatement,
 };
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
@@ -7,6 +8,16 @@ use std::collections::HashMap;
 
 type PrefixParseFn = fn(parser: &mut Parser) -> Option<ExpressionNode>;
 type InfixParseFn = fn(parser: &mut Parser, exp: ExpressionNode) -> Option<ExpressionNode>;
+
+enum PrecedenceLevel {
+    Lowest = 0,
+    Equals = 1,
+    LessGreater = 2,
+    Sum = 3,
+    Product = 4,
+    Prefix = 5,
+    Call = 6,
+}
 
 struct Parser {
     lexer: Lexer,
@@ -28,9 +39,18 @@ impl Parser {
             infix_parse_fns: HashMap::new(),
         };
 
+        parser.register_prefix(TokenKind::Identifier, Self::parse_identifier);
+
         parser.next_token();
         parser.next_token();
         parser
+    }
+
+    fn parse_identifier(&mut self) -> Option<ExpressionNode> {
+        Some(ExpressionNode::IdentifierNode(Identifier {
+            token: self.current_token.clone(),
+            value: self.current_token.literal.clone(),
+        }))
     }
 
     fn next_token(&mut self) {
@@ -55,8 +75,31 @@ impl Parser {
         match self.current_token.kind {
             TokenKind::Var => self.parse_var_statement(),
             TokenKind::Return => self.parse_return_statement(),
-            _ => None,
+            _ => self.parse_expression_statement(),
         }
+    }
+
+    fn parse_expression_statement(&mut self) -> Option<StatementNode> {
+        let stmt = ExpressionStatement {
+            token: self.current_token.clone(),
+            expression: self.parse_expression(PrecedenceLevel::Lowest),
+        };
+
+        if self.peek_token_is(TokenKind::SemiColon) {
+            self.next_token();
+        }
+
+        Some(StatementNode::Expression(stmt))
+    }
+
+    fn parse_expression(&mut self, precedence: PrecedenceLevel) -> Option<ExpressionNode> {
+        let prefix = self.prefix_parse_fns.get(&self.current_token.kind);
+        if let Some(prefix_fn) = prefix {
+            let left_exp = prefix_fn(self);
+
+            return left_exp;
+        }
+        None
     }
 
     fn parse_return_statement(&mut self) -> Option<StatementNode> {
@@ -93,7 +136,7 @@ impl Parser {
             } else {
                 self.next_token();
                 // TODO: need to parse expression
-                while self.current_token_is(TokenKind::SemiColon) {
+                while self.peek_token_is(TokenKind::SemiColon) {
                     self.next_token();
                 }
                 Some(StatementNode::Var(stmt))
