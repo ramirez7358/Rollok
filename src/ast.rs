@@ -9,7 +9,7 @@ pub trait Node {
 pub enum StatementNode {
     Var(VarStatement),
     Return(ReturnStatement),
-    Expression(ExpressionStatement)
+    Expression(ExpressionStatement),
 }
 
 impl Node for StatementNode {
@@ -149,7 +149,7 @@ impl Node for ReturnStatement {
 #[derive(Debug, Default)]
 pub struct ExpressionStatement {
     pub token: Token,
-    pub expression: Option<ExpressionNode>
+    pub expression: Option<ExpressionNode>,
 }
 
 impl Node for ExpressionStatement {
@@ -162,5 +162,44 @@ impl Node for ExpressionStatement {
             return expression.print_string();
         }
         String::from("")
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::ast::{ExpressionNode, Identifier, Node, Program, StatementNode, VarStatement};
+    use crate::token::{Token, TokenKind};
+
+    #[test]
+    fn test_print_string() {
+        let program = Program {
+            statements: vec![StatementNode::Var(VarStatement {
+                token: Token {
+                    kind: TokenKind::Var,
+                    literal: String::from("var"),
+                },
+                name: Identifier {
+                    token: Token {
+                        kind: TokenKind::Identifier,
+                        literal: String::from("myVar"),
+                    },
+                    value: String::from("myVar"),
+                },
+                value: Some(ExpressionNode::IdentifierNode(Identifier {
+                    token: Token {
+                        kind: TokenKind::Identifier,
+                        literal: String::from("anotherVar"),
+                    },
+                    value: String::from("anotherVar"),
+                })),
+            })],
+        };
+
+        assert_eq!(
+            program.print_string(),
+            String::from("var myVar = anotherVar;"),
+            "print string wrong, got = {}",
+            program.print_string()
+        );
     }
 }
