@@ -1,6 +1,9 @@
-use crate::ast::{Identifier, Program, ReturnStatement, StatementNode, VarStatement};
+use crate::ast::{ExpressionNode, Identifier, Program, ReturnStatement, StatementNode, VarStatement};
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
+
+type PrefixParseFn = fn(parser: &mut Parser) -> Option<ExpressionNode>;
+type InfixParseFn = fn(parser: &mut Parser, exp: ExpressionNode) -> Option<ExpressionNode>;
 
 struct Parser {
     lexer: Lexer,
