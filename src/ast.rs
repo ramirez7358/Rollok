@@ -165,6 +165,22 @@ impl Node for ExpressionStatement {
     }
 }
 
+#[derive(Debug)]
+pub struct IntegerLiteral {
+    pub token: Token,
+    pub value: i64,
+}
+
+impl Node for IntegerLiteral {
+    fn token_literal(&self) -> String {
+        self.token.literal.clone()
+    }
+
+    fn print_string(&self) -> String {
+        self.token_literal()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::ast::{ExpressionNode, Identifier, Node, Program, StatementNode, VarStatement};
