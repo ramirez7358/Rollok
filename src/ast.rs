@@ -33,18 +33,21 @@ impl Node for StatementNode {
 #[derive(Debug)]
 pub enum ExpressionNode {
     IdentifierNode(Identifier),
+    Integer(IntegerLiteral)
 }
 
 impl Node for ExpressionNode {
     fn token_literal(&self) -> String {
         match self {
             Self::IdentifierNode(identifier) => identifier.token_literal(),
+            Self::Integer(integer) => integer.token_literal()
         }
     }
 
     fn print_string(&self) -> String {
         match self {
             Self::IdentifierNode(identifier) => identifier.print_string(),
+            Self::Integer(integer) => integer.print_string(),
         }
     }
 }
