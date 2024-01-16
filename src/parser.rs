@@ -1,7 +1,4 @@
-use crate::ast::{
-    ExpressionNode, ExpressionStatement, Identifier, Program, ReturnStatement, StatementNode,
-    VarStatement,
-};
+use crate::ast::{ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, Program, ReturnStatement, StatementNode, VarStatement};
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
 use std::collections::HashMap;
@@ -40,10 +37,30 @@ impl Parser {
         };
 
         parser.register_prefix(TokenKind::Identifier, Self::parse_identifier);
+        parser.register_prefix(TokenKind::Number, Self::parse_integer_literal);
 
         parser.next_token();
         parser.next_token();
         parser
+    }
+
+    fn parse_integer_literal(&mut self) -> Option<ExpressionNode> {
+        let mut literal = IntegerLiteral {
+            token: self.current_token.clone(),
+            value: Default::default()
+        };
+
+        return match self.current_token.literal.parse::<i64>() {
+            Ok(value) => {
+                literal.value = value;
+                Some(ExpressionNode::Integer(literal))
+            },
+            Err(_) => {
+                let msg = format!("could not parse {} as integer", self.current_token.literal);
+                self.errors.push(msg);
+                None
+            }
+        }
     }
 
     fn parse_identifier(&mut self) -> Option<ExpressionNode> {
