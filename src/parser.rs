@@ -1,4 +1,7 @@
-use crate::ast::{ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, Program, ReturnStatement, StatementNode, VarStatement};
+use crate::ast::{
+    ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, Program, ReturnStatement,
+    StatementNode, VarStatement,
+};
 use crate::lexer2::Lexer;
 use crate::token::{Token, TokenKind};
 use std::collections::HashMap;
@@ -47,20 +50,20 @@ impl Parser {
     fn parse_integer_literal(&mut self) -> Option<ExpressionNode> {
         let mut literal = IntegerLiteral {
             token: self.current_token.clone(),
-            value: Default::default()
+            value: Default::default(),
         };
 
         return match self.current_token.literal.parse::<i64>() {
             Ok(value) => {
                 literal.value = value;
                 Some(ExpressionNode::Integer(literal))
-            },
+            }
             Err(_) => {
                 let msg = format!("could not parse {} as integer", self.current_token.literal);
                 self.errors.push(msg);
                 None
             }
-        }
+        };
     }
 
     fn parse_identifier(&mut self) -> Option<ExpressionNode> {
